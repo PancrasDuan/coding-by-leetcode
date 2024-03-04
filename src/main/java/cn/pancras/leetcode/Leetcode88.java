@@ -16,38 +16,39 @@ public class Leetcode88 {
     public void solution(int[] nums1, int m, int[] nums2, int n) {
         solution.merge(nums1, m, nums2, n);
     }
-}
-
-
-class Solution {
-    public void merge(int[] nums1, int m, int[] nums2, int n) {
-        int a = m-1, b= n-1;
-        int t = m+n-1;
-        
-        while(a>=0 || b>=0) {
-            if(a==-1) {
-                nums1[t]=nums2[b];
-                b--;
-                t--;
-            } else if(b==-1) {
-                break;
-            } else {
-                int tail1 = nums1[a];
-                int tail2 = nums2[b];
-                
-                if(tail1<tail2) {
-                    nums1[t] = tail2;
+    
+    class Solution {
+        public void merge(int[] nums1, int m, int[] nums2, int n) {
+            int a = m-1, b= n-1;
+            int t = m+n-1;
+            
+            while(a>=0 || b>=0) {
+                if(a==-1) {
+                    nums1[t]=nums2[b];
                     b--;
+                    t--;
+                } else if(b==-1) {
+                    break;
                 } else {
-                    nums1[t] = tail1;
-                    a--;
+                    int tail1 = nums1[a];
+                    int tail2 = nums2[b];
+                    
+                    if(tail1<tail2) {
+                        nums1[t] = tail2;
+                        b--;
+                    } else {
+                        nums1[t] = tail1;
+                        a--;
+                    }
+                    
+                    t--;
                 }
-                
-                t--;
             }
+            
         }
-        
     }
+
 }
+
 
 
