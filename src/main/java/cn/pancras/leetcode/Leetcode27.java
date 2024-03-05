@@ -21,7 +21,7 @@ public class Leetcode27 {
      * 前后双指针：
      * 不能使用for，需要保证head ！= val 才能移动至下一位置
      */
-    class Solution {
+    private class Solution {
         public int removeElement(int[] nums, int val) {
             int head = 0,tail = nums.length;
             

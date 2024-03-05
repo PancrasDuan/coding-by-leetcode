@@ -23,7 +23,7 @@ public class Leetcode26 {
      * 如果数据重复则 慢指针停留，快指针遍历
      * 如果数据不重复则 快指针的值赋给慢指针，慢指针+1
      */
-    class Solution {
+    private class Solution {
         public int removeDuplicates(int[] nums) {
             if (nums.length <= 1) {
                 return nums.length;

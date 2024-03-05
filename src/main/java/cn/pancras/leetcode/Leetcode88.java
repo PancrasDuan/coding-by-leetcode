@@ -17,7 +17,7 @@ public class Leetcode88 {
         solution.merge(nums1, m, nums2, n);
     }
     
-    class Solution {
+    private class Solution {
         public void merge(int[] nums1, int m, int[] nums2, int n) {
             int a = m-1, b= n-1;
             int t = m+n-1;
