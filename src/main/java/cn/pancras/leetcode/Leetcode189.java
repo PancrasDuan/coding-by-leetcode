@@ -58,6 +58,17 @@ public class Leetcode189 {
     }
     
     
+    /**
+     * 方法二：环状替换
+     */
+    private class Solution1 {
+        public void rotate(int[] nums, int k) {
+            
+            // todo
+            
+        }
+    }
+    
     
     /**
      * 方法三：数组翻转
