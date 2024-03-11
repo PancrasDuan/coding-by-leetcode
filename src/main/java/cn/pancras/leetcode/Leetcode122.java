@@ -28,7 +28,7 @@ public class Leetcode122 {
     
     private class Solution {
         public int maxProfit(int[] prices) {
-        
+            return 0;
         }
     }
 }
