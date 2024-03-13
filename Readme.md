@@ -16,7 +16,7 @@ day | leetcode
 2024年3月08日 | [121. 买卖股票的最佳时机](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/description/?envType=study-plan-v2&envId=top-interview-150)                                                                                                                
 2024年3月11日 | [122. 买卖股票的最佳时机 II](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/description/?envType=study-plan-v2&envId=top-interview-150)                                                                                                                
 2024年3月14日 | [123. 买卖股票的最佳时机 III](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-iii/description/)                                                                                                                
-2024年x月xx日 | [88. xx]()                                                                                                                
+2024年3月14日 | [55. 跳跃游戏](https://leetcode.cn/problems/jump-game/description/?envType=study-plan-v2&envId=top-interview-150)                                                                                                                
 2024年x月xx日 | [88. xx]()                                                                                                                
 2024年x月xx日 | [88. xx]()                                                                                                                
 2024年x月xx日 | [88. xx]()                                                                                                                
