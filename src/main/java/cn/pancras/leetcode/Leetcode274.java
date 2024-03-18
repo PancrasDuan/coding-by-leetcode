@@ -42,7 +42,7 @@ public class Leetcode274 {
             int ans = 0;
             
             for (int i = 0; i < citations.length; i++) {
-                if (i >= mid) {
+                if (citations[i] >= mid) {
                     ans++;
                 }
             }
