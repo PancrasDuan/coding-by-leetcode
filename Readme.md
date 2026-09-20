@@ -22,6 +22,7 @@ day | leetcode
 2026年9月18日 | [15. 三数之和](https://leetcode.cn/problems/3sum/description/?envType=study-plan-v2&envId=top-interview-150)                                                                                                                
 2026年9月19日 | [1. 两数之和](https://leetcode.cn/problems/two-sum/description/?envType=study-plan-v2&envId=top-interview-150)                                                                                                                
 2026年9月20日 | [11. 盛最多水的容器](https://leetcode.cn/problems/container-with-most-water/description/?envType=study-plan-v2&envId=top-interview-150)
+2026年9月20日 | [56. 合并区间](https://leetcode.cn/problems/merge-intervals/description/?envType=study-plan-v2&envId=top-interview-150)
 2024年x月xx日 | [88. xx]()                                                                                                                
 2024年x月xx日 | [88. xx]()                                                                                                                 
 2024年x月xx日 | [88. xx]()                                                                                                                
