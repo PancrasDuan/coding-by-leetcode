@@ -27,6 +27,7 @@ day | leetcode
 2026年9月28日 | [49. 字母异位词分组](https://leetcode.cn/problems/group-anagrams/description/)
 2026年9月30日 | [128. 最长连续序列](https://leetcode.cn/problems/longest-consecutive-sequence/description/)
 2026年9月30日 | [560. 和为 K 的子数组](https://leetcode.cn/problems/subarray-sum-equals-k/description/)
+2026年10月2日 | [438. 找到字符串中所有字母异位词](https://leetcode.cn/problems/find-all-anagrams-in-a-string/description/)
 2024年x月xx日 | [88. xx]()                                                                                                                
 2024年x月xx日 | [88. xx]()                                                                                                                 
 2024年x月xx日 | [88. xx]()                                                                                                                
