@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LeetCode 560 · 把区间和变成历史计数</title>
+  <style>
+
+/* coding-by-leetcode course stylesheet */
+:root {
+  color-scheme: light;
+  --paper: #f4efe4;
+  --paper-2: #fffaf0;
+  --ink: #1c1914;
+  --muted: #6a6258;
+  --line: #d9d0c1;
+  --accent: #8c2f21;
+  --accent-soft: #f3ddd6;
+  --teal: #1f5f56;
+  --teal-soft: #d7ebe7;
+  --amber: #9a6700;
+  --amber-soft: #f6e7c4;
+  --violet: #5b3f86;
+  --violet-soft: #e7def2;
+  --ok: #215c38;
+  --ok-soft: #d7eedf;
+  --bad: #8c2f21;
+  --bad-soft: #f6dcd6;
+  --code-bg: #211d18;
+  --code-ink: #f4efe4;
+  --shadow: 0 16px 40px rgb(28 25 20 / 8%);
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Songti SC", "Noto Serif SC", serif;
+  --sans: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", sans-serif;
+  --mono: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 8% -10%, rgb(140 47 33 / 8%), transparent 26rem),
+    var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+a { color: var(--accent); text-underline-offset: 0.18em; }
+a:hover { text-decoration-thickness: 2px; }
+button, input { font: inherit; }
+button:focus-visible, a:focus-visible, summary:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  outline-offset: 3px;
+}
+
+code, pre { font-family: var(--mono); }
+code {
+  font-size: 0.9em;
+  background: rgb(28 25 20 / 6%);
+  padding: 0.08em 0.35em;
+  border-radius: 4px;
+}
+pre code { background: none; padding: 0; color: inherit; }
+
+.course-shell {
+  width: min(100% - 32px, 860px);
+  margin: 0 auto;
+  padding: 48px 0 88px;
+}
+
+.lesson-hero, .ref-hero {
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 36px;
+}
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+h1 {
+  margin: 0 0 12px;
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3vw, 2.35rem);
+  line-height: 1.25;
+  font-weight: 650;
+}
+.hero-deck {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+.lesson-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+.lesson-meta span {
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.inline-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  margin-top: 16px;
+}
+
+.lesson-section { margin: 42px 0; }
+.section-number {
+  display: block;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+h2 {
+  margin: 0 0 12px;
+  font-family: var(--serif);
+  font-size: 1.45rem;
+  line-height: 1.3;
+}
+h3 { margin: 18px 0 8px; font-size: 1.05rem; }
+.lede { margin-top: 0; }
+.outcome, .note, .source-card, .ask-box {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+}
+.outcome { border-left: 4px solid var(--teal); }
+.note { border-left: 4px solid var(--amber); }
+.source-card { border-left: 4px solid var(--accent); }
+.ask-box { border-left: 4px solid var(--violet); }
+
+.prompt-list { padding-left: 1.2em; }
+.rule-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.rule-card {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+}
+.rule-card strong { display: block; margin-bottom: 6px; }
+.rule-lt { border-top: 4px solid var(--teal); }
+.rule-eq { border-top: 4px solid var(--ok); }
+.rule-gt { border-top: 4px solid var(--accent); }
+
+.array-legend { display: flex; gap: 14px; flex-wrap: wrap; margin: 10px 0 14px; font-size: 0.9rem; }
+.legend-i, .legend-l, .legend-r {
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.legend-i::before, .legend-l::before, .legend-r::before {
+  content: ""; width: 10px; height: 10px; border-radius: 99px;
+}
+.legend-i::before { background: var(--teal); }
+.legend-l::before { background: var(--amber); }
+.legend-r::before { background: var(--violet); }
+
+.sim {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: var(--shadow);
+}
+.sim-board {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 8px 0 14px;
+}
+.cell {
+  min-width: 58px;
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 8px 6px 6px;
+  background: #fff;
+}
+.cell .idx { display: block; font-size: 0.7rem; color: var(--muted); }
+.cell .val { font-family: var(--mono); font-size: 1.05rem; }
+.cell.is-i { background: var(--teal-soft); border-color: var(--teal); }
+.cell.is-l { background: var(--amber-soft); border-color: var(--amber); }
+.cell.is-r { background: var(--violet-soft); border-color: var(--violet); }
+.sim-status { min-height: 3.2em; margin: 0 0 12px; }
+.sim-found { color: var(--ok); font-weight: 600; }
+.sim-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.sim-actions button, .quiz button, .checkpoint button {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+.sim-actions button:hover, .quiz button:hover, .checkpoint button:hover {
+  border-color: var(--ink);
+}
+
+.quiz, .checkpoint {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+.quiz button, .checkpoint button { text-align: left; border-radius: 12px; }
+.quiz button[aria-pressed="true"].is-correct,
+.checkpoint button[aria-pressed="true"].is-correct {
+  background: var(--ok-soft);
+  border-color: var(--ok);
+}
+.quiz button[aria-pressed="true"].is-wrong,
+.checkpoint button[aria-pressed="true"].is-wrong {
+  background: var(--bad-soft);
+  border-color: var(--bad);
+}
+.feedback { min-height: 1.5em; margin: 8px 0 0; font-size: 0.95rem; }
+.feedback.ok { color: var(--ok); }
+.feedback.bad { color: var(--bad); }
+
+.code-window {
+  background: var(--code-bg);
+  color: var(--code-ink);
+  border-radius: 14px;
+  overflow: auto;
+  margin: 14px 0;
+}
+.code-caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  color: #cbbfae;
+  font-size: 0.8rem;
+  border-bottom: 1px solid rgb(244 239 228 / 12%);
+}
+pre {
+  margin: 0;
+  padding: 14px;
+  overflow: auto;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+details {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+summary { cursor: pointer; font-weight: 600; }
+
+.practice-steps { padding-left: 1.2em; }
+.muted { color: var(--muted); }
+
+@media (max-width: 720px) {
+  .rule-grid { grid-template-columns: 1fr; }
+  .cell { min-width: 48px; }
+}
+@media print {
+  body { background: #fff; }
+  .sim-actions, .quiz button, .checkpoint button { display: none; }
+  .course-shell { width: auto; }
+  a { color: inherit; }
+}
+
+.split-sims {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.split-sims h3 { margin-top: 0; }
+@media (max-width: 720px) {
+  .split-sims { grid-template-columns: 1fr; }
+}
+
+.part-break {
+  margin: 56px 0 28px;
+  padding-top: 28px;
+  border-top: 2px solid var(--line);
+}
+.part-break .eyebrow { margin-bottom: 4px; }
+
+/* 前缀和课件布局，复用既有三数之和课件的配色与排版。 */
+.formula { font-family: var(--mono); font-size: 1.2rem; text-align: center; padding: 24px; background: var(--teal-soft); border-radius: 12px; }
+.prefix-array { display: flex; gap: 10px; flex-wrap: wrap; }
+.prefix-cell { display: grid; text-align: center; min-width: 80px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 1.25rem; }
+.prefix-cell small { font-size: .72rem; color: var(--muted); }
+.prefix-cell.current { border: 2px solid var(--teal); background: var(--teal-soft); }
+.trace-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 18px 0; }
+.trace-grid > div { min-width: 0; overflow-wrap: anywhere; }
+select { max-width: 100%; padding: 6px; font: inherit; background: var(--paper-2); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; }
+button:disabled { opacity: .45; cursor: default; }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+th, td { padding: 10px 6px; text-align: left; border-bottom: 1px solid var(--line); }
+@media (max-width: 600px) { .trace-grid { grid-template-columns: 1fr; } table { font-size: .8rem; } }
+@media print { .course-shell { padding: 12px; } .quiz, .sim { break-inside: avoid; } .sim-actions, select { display: none; } .lesson-section { margin: 22px 0; } }
+
+  </style>
+
+</head>
+<body><main class="course-shell">
+  <header class="lesson-hero">
+    <p class="eyebrow">算法推导 · 01</p>
+    <h1>和为 K 的子数组</h1>
+    <p class="hero-deck">从连续区间到两个前缀的差，再从查找变成计数。</p>
+    <div class="lesson-meta"><span>约 8 分钟</span><span>目标：独立推导并实现</span><span>2026年10月2日归档</span><span>LeetCode 已通过</span></div>
+    <nav class="inline-links"><a href="#derive">推导</a><a href="#simulate">逐步演示</a><a href="#practice">动手写</a><a href="#reference">速查卡</a><a href="../leetcode15/3sum.html">三数之和复习</a></nav>
+  </header>
+  <section class="lesson-section">
+    <h2>先确认我们在数什么</h2>
+    <p><code>nums = [1,2,3]，k = 3</code>。符合条件的是下标 0..1 的 <code>[1,2]</code>，以及下标 2..2 的 <code>[3]</code>，答案为 2。子数组必须连续且非空；同样的数值出现在不同位置，算不同的子数组。<a href="https://leetcode.cn/problems/subarray-sum-equals-k/description/">题意与样例来源</a>。</p>
+    <p>最直接的方法：固定左端点，向右累加，每次和等于 k 就加一。累计求和的双层枚举是 O(n²)；我们要优化反复寻找左端点的过程。</p>
+    <aside class="note">题目允许负数。对于 <code>[3,-1]，k=2</code>，先看到 3 就因“和太大”丢掉它，会漏掉整个区间。因此不能直接套用“和大就缩、和小就扩”的滑窗规则。<a href="https://leetcode.cn/problems/subarray-sum-equals-k/description/">元素范围来源</a>。</aside>
+  </section>
+  <section class="lesson-section" id="derive">
+    <h2>减掉前面，剩下中间</h2>
+    <p>定义 <code>P[t]</code> 为<strong>前 t 个元素的和</strong>，因此 <code>P[0]=0</code>。它标记的是元素之间的边界。</p>
+    <div class="outcome"><code>nums = [1, 2, 3]</code><br><code>P = [0, 1, 3, 6]</code><br>区间 <code>nums[l..r]</code> 的和 = <code>P[r+1] − P[l]</code>。</div>
+    <p>例如最后一个元素 <code>[3]</code>：前 3 个元素的和 6，减去前 2 个元素的和 3，得到 3。这就是两个前缀相减后只剩中间区间。</p>
+    <p>当我们走到右端点 r，当前和记为 <code>sum = P[r+1]</code>：</p>
+    <div class="formula">sum − P[l] = k<br>↓<br>P[l] = sum − k</div>
+    <p>于是问题变成：<strong>之前的前缀和里，有多少个等于 sum-k？</strong>每个匹配的边界 l，都对应一个以 r 为右端点的合法子数组。这一推导与 <a href="https://leetcode.com/problems/subarray-sum-equals-k/?envId=Challenge-II&amp;envType=problem-list-v2">LeetCode 官方提示</a>给出的“区间差值 + 和的出现次数”方向一致。</p>
+    <div class="quiz" data-quiz data-answer="2" data-explanation="当前和 6 减去目标 3，所需的历史和是 3。">
+      <p>当前 sum=6、k=3，应当查哪个历史前缀和？</p>
+      <button type="button" data-choice="1">数值 2</button><button type="button" data-choice="2">数值 3</button><button type="button" data-choice="3">数值 9</button>
+      <p data-feedback class="feedback" aria-live="polite"></p>
+    </div>
+  </section>
+  <section class="lesson-section" id="simulate">
+    <h2>哈希表记的是出现次数</h2>
+    <p><code>freq.get(s)</code> 表示历史前缀和 s 出现过几次。先预测本步会找到几个区间，再点击“下一步”。从普通样例切换到重复前缀和，观察为什么不能只用 Set。</p>
+    <div class="sim" data-prefix-sim>
+      <label for="example">演示例子</label>
+      <select id="example"><option value="0">[1,2,3]，k=3</option><option value="1">[1,-1,1]，k=1</option><option value="2">[0,0]，k=0</option></select>
+      <p data-k></p><div class="prefix-array" data-array aria-label="数组及当前下标"></div>
+      <p data-status aria-live="polite"></p>
+      <div class="trace-grid"><div><strong>查询时的 freq</strong><p data-before></p></div><div><strong>登记本步 sum 后</strong><p data-after></p></div></div>
+      <p data-found></p><p data-count class="outcome"></p>
+      <div class="sim-actions"><button type="button" data-prev>上一步</button><button type="button" data-next>下一步</button><button type="button" data-reset>重置</button></div>
+    </div>
+    <p>在 <code>[1,-1,1]，k=1</code> 中，处理最后一个 1 时，历史前缀和 0 出现过两次：边界 0 和边界 2。因此本步新增 <code>[1,-1,1]</code> 与最后一个 <code>[1]</code>，不是只加 1。连同第一个 <code>[1]</code>，总计 3 个。</p>
+  </section>
+  <section class="lesson-section">
+    <h2>两个实现细节都来自“边界”</h2>
+    <div class="trace-grid">
+      <div class="note"><h3>为什么先放 freq[0]=1？</h3><p>读元素前就存在边界 <code>P[0]=0</code>。对于 <code>[3]，k=3</code>，sum-k=0；匹配它，才能数到从数组开头起的区间。它不是把空数组算进答案，而是提供一个合法左边界。</p></div>
+      <div class="note"><h3>为什么先查，再登记？</h3><p>查询时，表里只能有当前右边界之前的边界。若先登记当前 sum，在 k=0 时，会匹配当前边界自身，错误计入长度为 0 的区间。例如 <code>[1]，k=0</code> 应当返回 0。</p></div>
+    </div>
+    <div class="quiz" data-quiz data-answer="1" data-explanation="需要以前的左边界；先登记当前和，在 k=0 时会把当前边界自身也算进去。">
+      <p>每步更新 sum 后，接下来的顺序应当是什么？</p>
+      <button type="button" data-choice="1">先查再记</button><button type="button" data-choice="2">先记再查</button>
+      <p data-feedback class="feedback" aria-live="polite"></p>
+    </div>
+  </section>
+  <section class="lesson-section" id="practice">
+    <h2>复习时，先独立重写一次</h2>
+    <p>打开 <a href="../../src/main/java/cn/pancras/leetcode/Leetcode560.java">Leetcode560.java</a>，复习时先凭记忆重写 <code>subarraySum</code>，再与完成的实现核对。变量只需要 <code>sum</code>、<code>count</code> 与 <code>Map&lt;Integer,Integer&gt; freq</code>。不需要真的保存整个 P 数组。</p>
+    <div class="code-window"><pre><code>初始化 sum、count 和 freq
+登记初始边界：freq[0] = 1
+对于 nums 中的每个 x：
+    ① 把 x 加到 sum
+    ② count 增加「历史前缀和 ______ 的次数」
+    ③ 把当前 ______ 的出现次数加一
+返回 count</code></pre></div>
+    <details><summary>填完再核对两个空</summary><p>第一个是 <code>sum-k</code>，第二个是 <code>sum</code>。Java 取频次可用 <code>freq.getOrDefault(key, 0)</code>，写回用 <code>freq.put(key, value)</code>。</p></details>
+    <p>每步新增的区间都有唯一右端点；同一步中不同历史边界代表不同左端点，所以不会重复统计。同一个前缀和值可以对应多个边界，频次正好保存这个数量。</p>
+    <p>HashMap 操作平均为 O(1)，遍历一次，平均时间 O(n)，额外空间 O(n)。题目最多 20000 个元素，因此子数组总数至多 200010000，Java 的 int 足够保存答案。</p>
+    <table><thead><tr><th>实现后自行检查</th><th>预期</th><th>检验什么</th></tr></thead><tbody>
+      <tr><td>[1,1,1]，k=2</td><td>2</td><td>不同位置分别计数</td></tr>
+      <tr><td>[1,2,3]，k=3</td><td>2</td><td>包含单元素区间</td></tr>
+      <tr><td>[1,-1,1]，k=1</td><td>3</td><td>重复前缀和与负数</td></tr>
+      <tr><td>[0,0]，k=0</td><td>3</td><td>频次累加</td></tr>
+      <tr><td>[1]，k=0</td><td>0</td><td>排除空区间</td></tr>
+      <tr><td>[3]，k=3</td><td>1</td><td>初始边界</td></tr>
+    </tbody></table>
+    <aside class="note">现有 <a href="../../src/test/java/cn/pancras/leetcode/Leetcode560Test.java">样例测试</a>只打印结果，没有正确性断言。JUnit 显示通过，并不代表你已经算对；请核对输出或自己添加断言。</aside>
+  </section>
+
+  <section class="lesson-section part-break" id="reference">
+    <p class="eyebrow">复习速查</p><h2>前缀和 + 历史频次</h2>
+    <p>适用：统计连续非空区间的和恰好为 k 的个数，允许负数。<a href="#derive">返回完整推导</a> · <a href="#simulate">返回逐步演示</a></p>
+    <p>课件中的 <code>freq</code> 对应你的代码变量 <code>map</code>；课件中的 <code>count</code> 对应 <code>res</code>，含义相同。</p>
+
+<section class="lesson-section"><h2>统一术语</h2><table><tr><th>符号</th><th>含义</th></tr><tr><td>P[t]</td><td>前 t 个元素的和；P[0]=0</td></tr><tr><td>sum</td><td>处理 nums[r] 后的 P[r+1]</td></tr><tr><td>freq[s]</td><td>查询前，历史前缀和 s 出现的次数</td></tr><tr><td>count</td><td>已统计的合法子数组个数</td></tr></table></section>
+<div class="outcome">区间和 = P[r+1] − P[l]<br>区间和为 k ⇔ 历史 P[l] = sum − k</div>
+<section class="lesson-section"><h2>记住流程，不背代码</h2><p>初始：sum=0，count=0，freq[0]=1。</p><ol><li>累加当前元素到 sum。</li><li>count 加上 freq[sum-k]，不存在就加 0。</li><li>freq[sum] 加一。</li></ol><p>平均时间 O(n)，额外空间 O(n)。</p></section>
+<section class="lesson-section"><h2>三个边界理由</h2><ul><li>存次数：同一个前缀和值可以对应多个左边界。</li><li>初始 0：代表读取元素前的边界，覆盖从下标 0 开始的区间。</li><li>先查后记：避免 k=0 时计入当前边界自身，即空区间。</li></ul><p>自测：[1,-1,1]，k=1 → 3；[0,0]，k=0 → 3；[1]，k=0 → 0。</p></section>
+<p>题意与约束：<a href="https://leetcode.cn/problems/subarray-sum-equals-k/description/">力扣官方题目</a>。方向核对：<a href="https://leetcode.com/problems/subarray-sum-equals-k/?envId=Challenge-II&amp;envType=problem-list-v2">官方提示</a>。公式与边界理由为本地教学推导。</p>
+    <details><summary>先回忆流程，再展开查看你完成的 Java 实现</summary>
+      <div class="code-window"><pre><code>public int subarraySum(int[] nums, int k) {
+
+    Map&lt;Integer, Integer&gt; map = new HashMap&lt;&gt;();
+    map.put(0, 1);
+    int res = 0;
+    int sum = 0;
+    for (int i = 0; i &lt; nums.length; i++) {
+        sum += nums[i];
+        if (map.containsKey(sum - k)) {
+            res += map.get(sum - k);
+        }
+        map.put(sum, map.getOrDefault(sum, 0) + 1);
+    }
+
+    return res;
+}</code></pre></div>
+    </details>
+    <aside class="outcome"><strong>本课完成记录</strong><p>2026年10月2日，用户反馈 LeetCode 已通过。此前本地使用 Java 21 核对了 11839 个用例，包含与双层枚举对照、固定种子随机数组、负数、重复前缀和、k=0 与最大长度边界，全部通过。</p><p>实现已正确；能否独立解释公式、历史频次和查询顺序，仍请通过本页的回忆练习自测。</p></aside>
+    <p class="muted">资料说明：题意与约束已读取官方正文；官方提示方向由搜索索引核对，未完整读取官方题解正文。此页的推导、演示与练习为本地教学材料。</p>
+  </section>
+  <footer class="ask-box"><strong>用自己的话解释，才是这节课的验收。</strong><p>合上课件后解释：为什么找 sum-k？为什么记录次数？为什么先查后记？明天重新手算 [0,0]，k=0，再凭记忆写出流程。任何一步不明白，直接问我，也可以贴上你写的代码。</p><p>首选阅读：<a href="https://leetcode.cn/problems/subarray-sum-equals-k/description/">官方题目</a>。复习时看 <a href="#reference">前缀和计数速查卡</a>。</p></footer>
+</main>
+<script>
+/* 共享组件：前缀和计数演示与即时反馈练习。 */
+(function (root) {
+  function buildTrace(nums, k) {
+    const positions = new Map([[0, [0]]]);
+    const trace = [];
+    let sum = 0, count = 0;
+    const snapshot = () => Array.from(positions, ([value, boundaries]) => [value, boundaries.length]);
+    for (let i = 0; i < nums.length; i++) {
+      sum += nums[i];
+      const before = snapshot();
+      const starts = [...(positions.get(sum - k) || [])];
+      count += starts.length;
+      if (!positions.has(sum)) positions.set(sum, []);
+      positions.get(sum).push(i + 1);
+      trace.push({ i, sum, need: sum - k, before, starts, added: starts.length, count, after: snapshot() });
+    }
+    return trace;
+  }
+  root.PrefixSumLesson = { buildTrace };
+  if (typeof document === 'undefined') return;
+  document.addEventListener('DOMContentLoaded', () => {
+    const sim = document.querySelector('[data-prefix-sim]');
+    if (sim) {
+      const cases = [
+        { nums: [1, 2, 3], k: 3 },
+        { nums: [1, -1, 1], k: 1 },
+        { nums: [0, 0], k: 0 }
+      ];
+      let example = 0, step = -1;
+      const fmt = entries => entries.map(([value, frequency]) => `${value} → ${frequency} 次`).join('；');
+      const render = () => {
+        const { nums, k } = cases[example];
+        const trace = buildTrace(nums, k);
+        const current = trace[step];
+        sim.querySelector('[data-array]').replaceChildren(...nums.map((value, i) => {
+          const cell = document.createElement('span');
+          cell.className = 'prefix-cell' + (i === step ? ' current' : '');
+          const index = document.createElement('small');
+          index.textContent = `下标 ${i}`;
+          cell.append(String(value), index);
+          return cell;
+        }));
+        sim.querySelector('[data-k]').textContent = `k = ${k}`;
+        sim.querySelector('[data-prev]').disabled = step < 0;
+        sim.querySelector('[data-next]').disabled = step >= trace.length - 1;
+        sim.querySelector('[data-status]').textContent = current
+          ? `处理 nums[${step}] 后：sum = ${current.sum}；要查的历史和 = ${current.sum} − (${k}) = ${current.need}。`
+          : '尚未读取元素。sum = 0，count = 0；先登记边界 P[0] = 0。';
+        sim.querySelector('[data-before]').textContent = fmt(current ? current.before : [[0, 1]]);
+        sim.querySelector('[data-after]').textContent = fmt(current ? current.after : [[0, 1]]);
+        sim.querySelector('[data-found]').textContent = current && current.added
+          ? current.starts.map(start => `nums[${start}..${step}] = [${nums.slice(start, step + 1).join(', ')}]`).join('；')
+          : '本步没有找到新的子数组。';
+        sim.querySelector('[data-count]').textContent = `本步新增 ${current ? current.added : 0} 个；累计 ${current ? current.count : 0} 个。`;
+      };
+      sim.querySelector('select').addEventListener('change', event => { example = Number(event.target.value); step = -1; render(); });
+      sim.querySelector('[data-next]').addEventListener('click', () => { step++; render(); });
+      sim.querySelector('[data-prev]').addEventListener('click', () => { step--; render(); });
+      sim.querySelector('[data-reset]').addEventListener('click', () => { step = -1; render(); });
+      render();
+    }
+    document.querySelectorAll('[data-quiz]').forEach(quiz => {
+      quiz.querySelectorAll('button[data-choice]').forEach(button => {
+        button.setAttribute('aria-pressed', 'false');
+        button.addEventListener('click', () => {
+          quiz.querySelectorAll('button[data-choice]').forEach(other => {
+            other.setAttribute('aria-pressed', String(other === button));
+            other.classList.remove('is-correct', 'is-wrong');
+          });
+          const correct = button.dataset.choice === quiz.dataset.answer;
+          button.classList.add(correct ? 'is-correct' : 'is-wrong');
+          const feedback = quiz.querySelector('[data-feedback]');
+          feedback.textContent = (correct ? '正确。' : '再想一想。') + quiz.dataset.explanation;
+          feedback.className = 'feedback ' + (correct ? 'ok' : 'bad');
+        });
+      });
+    });
+  });
+})(globalThis);
+
+</script>
+</body></html>
