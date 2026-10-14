@@ -30,6 +30,7 @@ day | leetcode
 2026年10月2日 | [438. 找到字符串中所有字母异位词](https://leetcode.cn/problems/find-all-anagrams-in-a-string/description/)
 2026年10月2日 | [209. 长度最小的子数组](https://leetcode.cn/problems/minimum-size-subarray-sum/description/)
 2026年10月7日 | [19. 删除链表的倒数第 N 个结点](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/description/)
+2026年10月11日 | [33. 搜索旋转排序数组](https://leetcode.cn/problems/search-in-rotated-sorted-array/description/)
 2024年x月xx日 | [88. xx]()                                                                                                                
 2024年x月xx日 | [88. xx]()                                                                                                                 
 2024年x月xx日 | [88. xx]()                                                                                                                
