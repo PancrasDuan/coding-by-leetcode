@@ -31,6 +31,7 @@ day | leetcode
 2026年10月2日 | [209. 长度最小的子数组](https://leetcode.cn/problems/minimum-size-subarray-sum/description/)
 2026年10月7日 | [19. 删除链表的倒数第 N 个结点](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/description/)
 2026年10月11日 | [33. 搜索旋转排序数组](https://leetcode.cn/problems/search-in-rotated-sorted-array/description/)
+2026年10月14日 | [150. 逆波兰表达式求值](https://leetcode.cn/problems/evaluate-reverse-polish-notation/description/)
 2024年x月xx日 | [88. xx]()                                                                                                                
 2024年x月xx日 | [88. xx]()                                                                                                                 
 2024年x月xx日 | [88. xx]()                                                                                                                
