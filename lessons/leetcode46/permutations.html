@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LeetCode 46：从选数字理解回溯</title>
+  <style>
+:root { color-scheme: light; --ink: #242820; --muted: #626859; --accent: #276451; --line: #d8dece; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #f5f3eb; color: var(--ink); font: 17px/1.8 -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; }
+main { max-width: 860px; margin: 48px auto; padding: 0 28px; }
+h1, h2 { font-family: 'Songti SC', serif; line-height: 1.35; }
+h1 { font-size: 38px; } h2 { font-size: 25px; margin-top: 32px; }
+.eyebrow, .muted { color: var(--muted); }
+a { color: var(--accent); text-underline-offset: 4px; }
+section { border-top: 1px solid var(--line); padding: 8px 0 20px; }
+code, pre { font-family: ui-monospace, 'SFMono-Regular', monospace; }
+code { background: #e8ecdf; padding: 2px 5px; border-radius: 4px; }
+pre { background: #202b25; color: #f0f4e9; padding: 20px; border-radius: 9px; overflow-x: auto; line-height: 1.6; }
+pre code { padding: 0; background: none; }
+table { border-collapse: collapse; width: 100%; font-size: 16px; }
+td, th { padding: 10px; border-bottom: 1px solid var(--line); text-align: left; }
+details { background: #fffef8; border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin: 12px 0; }
+summary { cursor: pointer; color: var(--accent); }
+.callout { border-left: 4px solid var(--accent); padding: 8px 18px; background: #e8eee2; }
+@media (max-width: 560px) { main { margin-top: 24px; padding: 0 16px; } h1 { font-size: 30px; } }
+@media print { body { background: white; font-size: 12pt; } main { max-width: none; margin: 0; } pre { background: #eee; color: black; white-space: pre-wrap; } section, details { break-inside: avoid; } }
+  </style>
+</head>
+<body><main>
+  <p class="eyebrow">算法基础 · LeetCode 46 · 回溯复习</p>
+  <h1>全排列：选一个，走下去，再退回来</h1>
+  <p>学习目标：提升算法基础，优先理解思路和过程。复习时先手动追踪一条排列的生成过程，再凭记忆重写 Java 方法。</p>
+  <nav><a href="#trace">看过程</a> · <a href="#practice">练一下</a> · <a href="#reference">回溯速查</a> · <a href="../leetcode560/subarray-sum.html">和为 K 的子数组</a> · <a href="../leetcode15/3sum.html">三数之和</a></nav>
+  <section>
+    <h2>1. 每次只决定一个位置</h2>
+    <p><a href="https://leetcode.com/problems/permutations/description/">题目</a>要求把互不相同的数字排出所有顺序。对于 <code>[1,2,3]</code>，第一个位置有 3 种选择，第二个位置有 2 种，最后只有 1 种，一共 6 个结果。</p>
+    <pre>[]
+├─ [1] ─ [1,2] ─ [1,2,3]
+│      └ [1,3] ─ [1,3,2]
+├─ [2] ─ [2,1] ─ [2,1,3]
+│      └ [2,3] ─ [2,3,1]
+└─ [3] ─ [3,1] ─ [3,1,2]
+       └ [3,2] ─ [3,2,1]</pre>
+    <p>递归调用的含义是：<strong>当前前缀已经选好了，请把剩下的位置继续填完。</strong>例如前缀是 <code>[1]</code> 时，接下来只需要处理 2 和 3。</p>
+  </section>
+  <section id="trace">
+    <h2>2. 三份状态就够了</h2>
+    <table><thead><tr><th>变量</th><th>含义</th><th>初始状态</th></tr></thead><tbody>
+      <tr><td><code>path</code></td><td>这条分支已经选出的数字</td><td><code>[]</code></td></tr>
+      <tr><td><code>used[i]</code></td><td><code>nums[i]</code> 是否在当前路径中</td><td>全部为 false</td></tr>
+      <tr><td><code>res</code></td><td>保存完整排列</td><td><code>[]</code></td></tr>
+    </tbody></table>
+    <p><code>used</code> 按数组下标记录使用情况，不是把数字当作下标；数字可能是负数。它只表示当前路径中的占用，完成一次排列并不会永久用掉数字。</p>
+    <table><thead><tr><th>动作</th><th>path</th><th>used</th></tr></thead><tbody>
+      <tr><td>选择 1</td><td>[1]</td><td>[true,false,false]</td></tr>
+      <tr><td>选择 2</td><td>[1,2]</td><td>[true,true,false]</td></tr>
+      <tr><td>选择 3，保存排列</td><td>[1,2,3]</td><td>[true,true,true]</td></tr>
+      <tr><td>返回到 [1,2]，撤销 3</td><td>[1,2]</td><td>[true,true,false]</td></tr>
+      <tr><td>这一层没有其他选择，返回到 [1]，撤销 2</td><td>[1]</td><td>[true,false,false]</td></tr>
+      <tr><td>接着选择 3</td><td>[1,3]</td><td>[true,false,true]</td></tr>
+      <tr><td>继续选择 2，保存排列</td><td>[1,3,2]</td><td>[true,true,true]</td></tr>
+    </tbody></table>
+    <p class="callout">每次递归结束，必须撤销本次选择，让 path 和 used 回到选择之前的状态，下一条分支才有相同的起点。</p>
+    <p>这就是 <a href="https://web.stanford.edu/class/archive/cs/cs106b/cs106b.1206/lectures/backtracking1/">Stanford 回溯课程</a>中的“选择 → 探索 → 撤销”。返回会结束当前函数调用，但不会自动撤销共享列表的修改。</p>
+  </section>
+  <section>
+    <h2>3. 转成实现步骤</h2>
+    <pre>准备 res、空 path、全为 false 的 used
+从空路径开始递归
+
+每次递归：
+  如果 path 已有 n 个数字：保存它的副本，结束当前调用
+  否则，遍历所有下标 i：
+    如果 used[i] 为 true：跳过
+    选择：加入 nums[i]，标记已使用
+    探索：调用 explore，递归填写下一个位置
+    撤销：移除刚加入的数字，取消使用标记</pre>
+    <p>每层都从下标 0 开始遍历，再用 <code>used</code> 排除当前路径里的数字。如果限制后面只能选更大的下标，会漏掉 <code>[2,1,3]</code> 等顺序。</p>
+    <p>保存结果要用 <code>res.add(new ArrayList&lt;&gt;(path))</code>。直接加入 <code>path</code> 会让结果指向同一个可变列表，后续撤销也会改变它。<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ArrayList.html">复制构造器</a>创建新的列表容器；本题元素是 Integer，这样复制就够了。</p>
+    <p>当前 Java 21 实现用 <code>path.removeLast()</code> 撤销末尾元素；也可用 <code>path.remove(path.size() - 1)</code> 按索引删除。两者都撤销刚加入的元素。</p>
+  </section>
+  <section id="practice">
+    <h2>4. 先想，再展开核对</h2>
+    <p>不要先看反馈。每题说出理由，而不只是猜结论。</p>
+    <details><summary>path = [2] 时，下一位有哪些候选？</summary><p>1 和 3。2 已经出现在当前路径中；1 的下标更小也不影响它成为候选。</p></details>
+    <details><summary>从 [1,2,3] 保存并返回后，先恢复成哪条路径？</summary><p>[1,2]，同时取消 3 的使用标记。再由上一层撤销 2，才恢复成 [1]。</p></details>
+    <details><summary>如果只删除 path 末尾，不把 used[i] 改回 false，会怎样？</summary><p>数字已经离开路径，却仍被认为在使用中，后面的分支会错误跳过它，导致漏解。</p></details>
+    <p>复习时先独立写出伪代码，再与 <a href="../../src/main/java/cn/pancras/leetcode/Leetcode46.java">Leetcode46.java</a> 中的 <code>explore</code> 实现核对。验收：三个官方样例得到完整排列，顺序不限；[1,2,3] 应有 6 个不同结果，每个结果包含三个数字且各用一次。现有 <a href="../../src/test/java/cn/pancras/leetcode/Leetcode46Test.java">样例测试</a>只打印，需要自行核对结果。</p>
+    <p>这种实现的时间复杂度是 O(n × n!)：有 n! 个结果，每个结果要复制 n 个元素；每个节点扫描 n 个候选也在这个量级内。辅助空间 O(n)，不计保存结果的 O(n × n!) 空间。这是对本课实现的计数推导。</p>
+    <p>下次复习时不看课件，重新解释“为什么撤销”和“为什么复制”，再写一次伪代码。可以把代码或不明白的步骤发给我，我们逐步核对。</p>
+  </section>
+<section id="reference"><h2>复习速查：术语</h2><p><strong>路径 path</strong>：当前已做的选择。<strong>使用标记 used</strong>：当前路径占用了哪些下标。<strong>结果 res</strong>：完整路径的副本。<strong>回溯</strong>：递归探索后撤销选择，恢复状态。</p></section>
+<section><h2>四个检查点</h2><ol><li>path.size() == nums.length 时，保存副本并返回。</li><li>每层遍历所有下标，跳过 used[i] 为 true 的候选。</li><li>选择时修改 path 和 used；递归结束后成对撤销。</li><li>撤销之后，状态应与本次选择之前完全相同。</li></ol><p>全排列的数字互不相同；不需要排序，也不需要处理重复值去重。</p></section>
+<section><h2>Java 提醒</h2><p>保存：<code>new ArrayList&lt;&gt;(path)</code>。撤销末尾：<code>path.removeLast()</code>（Java 21）。取消标记：<code>used[i] = false</code>。</p><p>时间 O(n × n!)，辅助空间 O(n)，结果空间 O(n × n!)。</p></section>
+<p>来源：<a href="https://leetcode.com/problems/permutations/description/">LeetCode 题意</a> · <a href="https://web.stanford.edu/class/archive/cs/cs106b/cs106b.1206/lectures/backtracking1/">Stanford 回溯框架</a> · <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ArrayList.html">Oracle ArrayList</a></p>
+
+  <footer><p>推荐原始资料：<a href="https://web.stanford.edu/class/archive/cs/cs106b/cs106b.1206/lectures/backtracking1/">Stanford CS106B 回溯课</a>。先读 Choose-explore-unchoose 部分即可。LeetCode 用于核对题意、约束与样例；Oracle 文档用于核对列表复制和删除操作。过程演示、练习与复杂度计数为本地教学材料。</p></footer>
+</main></body></html>

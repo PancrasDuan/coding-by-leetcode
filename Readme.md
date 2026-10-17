@@ -33,6 +33,7 @@ day | leetcode
 2026年10月11日 | [33. 搜索旋转排序数组](https://leetcode.cn/problems/search-in-rotated-sorted-array/description/)
 2026年10月14日 | [150. 逆波兰表达式求值](https://leetcode.cn/problems/evaluate-reverse-polish-notation/description/)
 2026年10月14日 | [102. 二叉树的层序遍历](https://leetcode.cn/problems/binary-tree-level-order-traversal/description/)
+2026年10月14日 | [46. 全排列](https://leetcode.cn/problems/permutations/description/)
 2024年x月xx日 | [88. xx]()                                                                                                                
 2024年x月xx日 | [88. xx]()                                                                                                                 
 2024年x月xx日 | [88. xx]()                                                                                                                
