@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LeetCode 200：岛屿数量与网格 DFS</title><style>
+:root { color-scheme: light; --ink: #242820; --muted: #626859; --accent: #276451; --line: #d8dece; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #f5f3eb; color: var(--ink); font: 17px/1.8 -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; }
+main { max-width: 860px; margin: 48px auto; padding: 0 28px; }
+h1, h2 { font-family: 'Songti SC', serif; line-height: 1.35; }
+h1 { font-size: 38px; } h2 { font-size: 25px; margin-top: 32px; }
+.eyebrow, .muted { color: var(--muted); }
+a { color: var(--accent); text-underline-offset: 4px; }
+section { border-top: 1px solid var(--line); padding: 8px 0 20px; }
+code, pre { font-family: ui-monospace, 'SFMono-Regular', monospace; }
+code { background: #e8ecdf; padding: 2px 5px; border-radius: 4px; }
+pre { background: #202b25; color: #f0f4e9; padding: 20px; border-radius: 9px; overflow-x: auto; line-height: 1.6; }
+pre code { padding: 0; background: none; }
+table { border-collapse: collapse; width: 100%; font-size: 16px; }
+td, th { padding: 10px; border-bottom: 1px solid var(--line); text-align: left; }
+details { background: #fffef8; border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin: 12px 0; }
+summary { cursor: pointer; color: var(--accent); }
+.callout { border-left: 4px solid var(--accent); padding: 8px 18px; background: #e8eee2; }
+@media (max-width: 560px) { main { margin-top: 24px; padding: 0 16px; } h1 { font-size: 30px; } }
+@media print { body { background: white; font-size: 12pt; } main { max-width: none; margin: 0; } pre { background: #eee; color: black; white-space: pre-wrap; } section, details { break-inside: avoid; } }
+
+
+.note { border-left: 4px solid var(--accent); padding: 8px 18px; background: #e8eee2; }
+nav { font-size: 15px; }
+</style></head>
+<body><main><p class="muted">LeetCode 200 · 学习归档 · 2026-10-17</p><h1>一整座岛，怎样只数一次？</h1><p>学习目标：先理解状态变化，再独立用 Java 实现岛屿计数。当前已完成原地标记的递归解法。</p>
+<nav><a href="#meaning">题意</a> · <a href="#trace">手推</a> · <a href="#dfs">递归任务</a> · <a href="#practice">自测</a> · <a href="#reference">速查</a> · <a href="../leetcode78/subsets.html">子集复习</a></nav>
+<section id="meaning"><h2>1. 数的是连成片的陆地</h2><p>按<a href="https://leetcode.cn/problems/number-of-islands/description/">原题</a>，只考虑上下左右相邻，斜角不相连。</p><pre>1 1 0
+0 1 0
+1 0 1</pre><p>左上三个 1 连成一座岛；左下和右下各是一座，一共 3 座。陆地格子数量是 5，岛屿数量是 3。</p></section>
+<section id="trace"><h2>2. 找到新岛后，先认领整座岛</h2><p>从上到下、从左到右扫描。你的实现把访问过的陆地从字符 1 改成字符 0，以此代替独立的 visited 数组。下面用 ● 表示“已经标记的陆地”，代码中它实际已经变成 0。</p><pre>初始             从 (0,0) 搜索完后
+1 1 0            ● ● 0
+0 1 0            0 ● 0
+1 0 1            1 0 1
+计数 0           计数 1</pre><p>坐标从 0 开始。搜索从 (0,0) 走到 (0,1)，再走到 (1,1)，把相连陆地全部标记。外层继续扫描时，(0,1) 和 (1,1) 都跳过。直到 (2,0) 才发现新岛，计数变成 2；(2,2) 让计数变成 3。</p><p class="note">外层负责找新岛并计数；内层搜索负责标记整座岛。搜索走到另一块陆地时，不再加岛屿计数。</p><p>这对应<a href="https://cp-algorithms.com/graph/search-for-connected-components.html">连通分量算法</a>：每次从未访问的节点出发，覆盖它所在的整个连通分量。</p></section>
+<section id="dfs"><h2>3. 一次递归负责什么？</h2><p>把 dfs(r,c) 理解成：“从这个坐标出发，把能通过陆地走到的格子都标记。”DFS 就是先沿一条路深入，走不通后返回，再继续其他方向。</p><p>遇到越界、水或已经访问的格子，就结束当前调用。遇到新陆地，先标记自己，再分别探索上下左右。必须先标记，否则相邻的两个格子可能互相走回去。</p><p>返回只结束当前调用，调用它的那一层还会继续检查剩下的方向。</p><details><summary>与子集练习对比：返回时要恢复成 1 吗？</summary><p>不撤销。子集的 path 表示当前选择，需要恢复后探索其他选择；本题把陆地改成 0，表示它已被统计，整个扫描过程都保留这个事实。</p></details></section>
+<section id="practice"><h2>4. 先回答，再展开</h2><p>① 从 (0,0) 搜索完整座岛后，外层扫到 (1,1)，计数是多少？为什么？</p><details><summary>核对反馈</summary><p>仍是 1。(1,1) 已被第一轮搜索标记，它属于已经数过的岛。</p></details>
+<p>② 下面有几座岛？只在脑中沿上下左右走。</p><pre>1 0
+0 1</pre><details><summary>核对反馈</summary><p>2 座。斜角不相连。</p></details>
+<p>③ 如果递归返回时清除访问标记，会发生什么？</p><details><summary>核对反馈</summary><p>同一块陆地会再次变成未访问，后续可能重复搜索、重复计数；多条连通路径还可能导致大量重复探索。</p></details>
+<p>合上课件，复述：“何时计数？何时返回？何时标记？返回时是否恢复？”明天再回忆一次。任何一步不清楚，都可以继续问我。</p></section>
+<section id="reference"><h2>复习速查：你的实现</h2><p>外层扫描：遇到 '1'，计数加一，再调用 dfs。内层搜索：先检查越界或 '0'，符合就返回；否则把当前格子改成 '0'，依次探索上、下、左、右。</p><p>四邻坐标：(r−1,c)、(r+1,c)、(r,c−1)、(r,c+1)。先判断边界再访问数组，Java 的 || 短路求值保证越界时不读取该格子。</p><p>原地标记会修改输入；同一个网格被完整搜索后，再次调用会得到 0。每个测试应使用独立输入。</p><p>m 行 n 列：扫描 mn 格，每格最多有效访问一次，检查四个方向，时间 O(mn)。没有独立 visited 数组，但最坏递归深度为 mn，因此辅助空间为 O(mn)。</p><h2>已验证与限制</h2><p>Java 21 本地验证：官方样例输出 1、3；全部 4096 种 3×4 二值网格与独立 BFS 对照一致。300×300 全陆地在本地 JVM 出现 StackOverflowError：计数逻辑正确，但深递归受栈容量限制。若要稳妥处理大网格，可改成显式栈 DFS 或队列 BFS；当前归档保留你完成的递归实现。</p><p><a href="../../src/main/java/cn/pancras/leetcode/Leetcode200.java">Java 实现</a> · <a href="../../src/test/java/cn/pancras/leetcode/Leetcode200Test.java">样例测试</a>（仅打印，无断言）。</p><h2>边界用例</h2><p>单格水期望 0；单格陆地期望 1；对角两块陆地期望 2；全陆地期望 1。行数由 grid.length 决定，列数由 grid[0].length 决定，陆地用字符 '1' 判断。若需要保留输入，可以额外使用 boolean[][] visited。</p><h2>闭卷复习</h2><p>解释：为什么只在外层计数？为什么先标记再递归？为什么返回后不恢复？为什么空间不是 O(1)？不清楚的部分可继续向我提问。</p></section><section id="progress"><h2>学习记录</h2><p>已通过口头推演说明：已访问的格子不能再次计数；先标记再探索能阻止 A 与 B 互相递归；一次调用返回后，调用者继续检查剩下的方向；访问标记不撤销。四邻坐标回答正确，并已独立完成递归实现。</p><p>后续复习可先闭卷解释复杂度与原地修改输入的影响。尚未验证独立实现迭代 DFS 或 BFS 的能力。</p></section><footer><p>首读：<a href="https://leetcode.cn/problems/number-of-islands/description/">官方题目</a>；理解后再读<a href="https://cp-algorithms.com/graph/search-for-connected-components.html">连通分量原始教程</a>。例子和练习为本地教学整理。独立实现后，可在<a href="https://leetcode.cn/problems/number-of-islands/discussion/">题目讨论区</a>对照边界用例，讨论内容需自行验证。</p><p><a href="#reference">复习速查</a> · <a href="../../src/main/java/cn/pancras/leetcode/Leetcode200.java">查看已完成实现</a></p></footer></main></body></html>
