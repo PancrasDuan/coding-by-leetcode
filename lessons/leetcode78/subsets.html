@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>LeetCode 78：从选择数字推导子集</title><style>
+:root { color-scheme: light; --ink: #242820; --muted: #626859; --accent: #276451; --line: #d8dece; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #f5f3eb; color: var(--ink); font: 17px/1.8 -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; }
+main { max-width: 860px; margin: 48px auto; padding: 0 28px; }
+h1, h2 { font-family: 'Songti SC', serif; line-height: 1.35; }
+h1 { font-size: 38px; } h2 { font-size: 25px; margin-top: 32px; }
+.eyebrow, .muted { color: var(--muted); }
+a { color: var(--accent); text-underline-offset: 4px; }
+section { border-top: 1px solid var(--line); padding: 8px 0 20px; }
+code, pre { font-family: ui-monospace, 'SFMono-Regular', monospace; }
+code { background: #e8ecdf; padding: 2px 5px; border-radius: 4px; }
+pre { background: #202b25; color: #f0f4e9; padding: 20px; border-radius: 9px; overflow-x: auto; line-height: 1.6; }
+pre code { padding: 0; background: none; }
+table { border-collapse: collapse; width: 100%; font-size: 16px; }
+td, th { padding: 10px; border-bottom: 1px solid var(--line); text-align: left; }
+details { background: #fffef8; border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin: 12px 0; }
+summary { cursor: pointer; color: var(--accent); }
+.callout { border-left: 4px solid var(--accent); padding: 8px 18px; background: #e8eee2; }
+@media (max-width: 560px) { main { margin-top: 24px; padding: 0 16px; } h1 { font-size: 30px; } }
+@media print { body { background: white; font-size: 12pt; } main { max-width: none; margin: 0; } pre { background: #eee; color: black; white-space: pre-wrap; } section, details { break-inside: avoid; } }
+
+</style></head>
+<body><main><p class="eyebrow">LeetCode 78 · 子集 · 回溯复习</p><h1>子集：每个数字，要还是不要？</h1>
+<p>学习目标：理解决策树的深度优先遍历，能独立解释状态变化，并凭记忆重写解法。</p>
+<nav><a href="#meaning">理解题意</a> · <a href="#tree">手动枚举</a> · <a href="#state">递归状态</a> · <a href="#return">返回与撤销</a> · <a href="#practice">自测</a> · <a href="#reference">复习速查</a> · <a href="#compare">补充：对比 46</a></nav>
+<section id="meaning"><h2>1. 子集，就是从给定数字里挑一些</h2><p><a href="https://leetcode.com/problems/subsets/description/">78 题目</a>给出互不相同的数字，要求返回所有子集，不能重复。可以一个也不选，也可以全部选中。</p>
+<p>输入 [1,2]，有四种结果：</p><table><tr><th>结果</th><th>含义</th></tr><tr><td>[]</td><td>什么都不选</td></tr><tr><td>[1]</td><td>只选 1</td></tr><tr><td>[2]</td><td>只选 2</td></tr><tr><td>[1,2]</td><td>两个都选</td></tr></table><p>[2,1] 和 [1,2] 表示同一子集，不能各算一个答案。最终结果列表的排列顺序不限。</p></section>
+<section id="tree"><h2>2. 怎么确保不漏？依次问每个数字</h2><p>先问“1 要不要”，再问“2 要不要”。无论前面选了什么，当前数字都有两种决定。</p>
+<pre>开始：[]
+├─ 不选 1：[]
+│  ├─ 不选 2 → []
+│  └─ 选   2 → [2]
+└─ 选   1：[1]
+   ├─ 不选 2 → [1]
+   └─ 选   2 → [1,2]</pre>
+<p class="callout">这套解法本质上是深度优先遍历一棵二叉决策树：节点对应一次调用，两条边对应选或不选，叶子对应完整子集。</p><p>每条走到底的路都决定了所有数字的去留，所以得到一个完整子集。反过来，任何子集都有唯一的一串选与不选，因此这样既不会漏，也不会重复。</p>
+<p>加上数字 3 后，每个已有子集又有“不加 3”和“加 3”两种情况：结果从 4 个变成 8 个。这是 <a href="https://web.stanford.edu/class/archive/cs/cs106b/cs106b.1206/lectures/backtracking1/">Stanford 回溯课 Subsets 小节</a>的决策树思路。</p></section>
+<section id="state"><h2>3. 递归需要记住哪两件事？</h2><table><tr><th>状态</th><th>含义</th></tr><tr><td>path</td><td>从根走到当前节点时，沿途已经选中的数字</td></tr><tr><td>process</td><td>已完成的决策次数，也就是下一个要决定的数字下标</td></tr></table>
+<p>例如 nums=[1,2,3]，process=2、path=[1] 表示：前两个数字已经决定完，选了 1、没选 2；接下来决定 nums[2]，也就是 3。</p>
+<p>process 从 0 开始，每次递归前进 1；path.size() ≤ process，因为不选也算完成一次决策。</p><p class="callout">一次递归的任务：前面的决定已经做好，请把从 process 开始的所有选法继续探索完。</p>
+<p>不选：path 不变，下一层处理 process+1。选：先加入 nums[process]，下一层同样处理 process+1。</p>
+<p>当 process == nums.length 时，没有数字需要决定，保存 path 的副本，然后返回。即使 path 为空，也要保存，因为空集同样是答案。</p>
+<details><summary>停一下：为什么不能用 path.size() 判断结束？</summary><p>不选也会推进处理进度，却不会增加 path 的长度。结束表示“全部考虑完”，不是“全部选进来”。</p></details></section>
+<section id="return"><h2>4. 返回后，篮子为什么需要恢复？</h2>
+<p>仍看 process=2、path=[1]，接下来处理 3：</p><pre>不选 3：下一层保存 [1]，返回后 path 仍为 [1]
+选   3：加入 3 → 下一层保存 [1,3] → 返回 → 移除 3
+本次调用结束：path 恢复为进入时的 [1]</pre>
+<p>path 是共享的列表。函数返回不会自动撤销列表修改，需要亲手把刚加入的元素移除。process 是 int，传入 process+1 不会改变当前调用自己的 process。</p>
+<p>保存结果时，要复制当时的内容：new ArrayList&lt;&gt;(path)。如果只保存同一个列表引用，之后撤销选择，已保存的条目也会跟着变化。</p>
+<p>按照“不选优先”的顺序，一层的工作可口头复述为：检查是否处理完 → 探索不选 → 加入当前数字 → 探索选 → 撤销加入。递归中的 return 只结束当前那次调用，回到调用处之后继续执行。因此完成“不选”的递归后，仍要继续执行“选”的分支；两条分支按先后顺序执行。</p></section>
+<section id="practice"><h2>5. 先自己推，再展开核对</h2>
+<p>nums=[1,2,3]，process=1、path=[]。现在考虑哪个数字？如果不选，下一层的两个状态分别是什么？</p><details><summary>查看反馈</summary><p>考虑 nums[1]，也就是 2。不选后，process=2、path=[]；接下来考虑 3。没选数字不代表没有推进。</p></details>
+<p>同样从 process=1、path=[] 出发，如果选了 2，递归处理后面的数字并返回，那么当前这一层需要撤销谁？</p><details><summary>查看反馈</summary><p>撤销自己加入的 2。更深层负责恢复自己的选择，因此返回到当前层时 path 应为 [2]，再移除 2，恢复进入时的 []。</p></details>
+<p>不看上文，用自己的话说出：每层负责什么、什么时候收集、返回前恢复什么。明天再凭记忆复述一次。</p></section>
+<section id="reference"><h2>复习速查：从思路到实现</h2><pre>初始：res 为空，path 为空，process = 0
+每次调用：
+  如果所有数字都决定完：保存 path 副本，返回
+  不选当前数字：保持 path，递归处理下一个数字
+  选当前数字：加入 nums[process]，递归处理下一个数字
+  移除本层加入的数字，恢复 path</pre>
+<p>保存副本：<code>new ArrayList&lt;&gt;(path)</code>。撤销末尾：<code>path.removeLast()</code>（Java 21）。不提前添加空集，不需要 used，也不需要遍历所有候选的 for 循环。</p>
+<p>先独立复述，再与 <a href="../../src/main/java/cn/pancras/leetcode/Leetcode78.java">Leetcode78.java</a> 核对。[1,2,3] 应产生 8 个不同子集，包含空集和全集；<a href="../../src/test/java/cn/pancras/leetcode/Leetcode78Test.java">样例测试</a>仅打印，需核对内容和重复情况。</p>
+<p>本实现的计数推导：深度为 n，有 2ⁿ 个叶子；每个叶子复制路径，所有结果共保存 n·2ⁿ⁻¹ 个数字。因此时间 O(n·2ⁿ)，辅助空间 O(n)，结果空间 O(n·2ⁿ)。</p>
+<p>下次复习，不看材料解释“为什么 path.size() 不等于 process”“返回后为什么还执行另一条分支”“为什么撤销、为什么复制”。任何不清楚的状态变化，都可以继续追问。</p></section>
+<section id="compare"><h2>补充材料：学完 78 后再对比 46</h2><details><summary>展开：两题每层的任务有什么不同？</summary>
+<table><tr><th>问题</th><th>78 本课写法</th><th>46 已有写法</th></tr><tr><td>每层决定</td><td>当前数字要不要</td><td>下个位置放哪个未用数字</td></tr><tr><td>分支</td><td>选、不选</td><td>遍历未用数字</td></tr><tr><td>进度</td><td>process</td><td>path.size()</td></tr><tr><td>结束条件</td><td>所有数字考虑完</td><td>所有位置填满</td></tr><tr><td>使用记录</td><td>下标只前进，不需要 used</td><td>used 防止路径内重复使用</td></tr></table>
+<p>两题都要保存 path 的副本，并撤销共享路径的修改。这里比较的是两种具体写法；78 也有循环递归写法，本课先专注选或不选。</p><p><a href="../leetcode46/permutations.html">46 复习课件</a> · <a href="https://leetcode.com/problems/permutations/description/">46 原题</a></p></details></section>
+<footer><p>推荐原始资料：<a href="https://web.stanford.edu/class/archive/cs/cs106b/cs106b.1206/lectures/backtracking1/">Stanford CS106B：Subsets 与 Tracing down and back</a>。<a href="https://leetcode.com/problems/subsets/description/">LeetCode 78</a> 用于核对题意；状态追踪、练习与复杂度计数为本地教学整理。</p></footer></main></body></html>
