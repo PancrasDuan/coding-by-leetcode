@@ -36,6 +36,7 @@ day | leetcode
 2026年10月14日 | [46. 全排列](https://leetcode.cn/problems/permutations/description/)
 2026年10月17日 | [78. 子集](https://leetcode.cn/problems/subsets/description/)
 2026年10月17日 | [200. 岛屿数量](https://leetcode.cn/problems/number-of-islands/description/) · [学习归档](lessons/leetcode200/number-of-islands.html)
+2026年10月18日 | [98. 验证二叉搜索树](https://leetcode.cn/problems/validate-binary-search-tree/description/)
 2024年x月xx日 | [88. xx]()                                                                                                                
 2024年x月xx日 | [88. xx]()                                                                                                                 
 2024年x月xx日 | [88. xx]()                                                                                                                
